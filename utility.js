@@ -1,6 +1,5 @@
 const jwt = require('node-webtokens');
-const jweAlgorithms = require('./jweEncryptions');
-
+const tokenAlgorithms = require('./tokenAlgorithms');
 const bcrypt = require('bcrypt');
 
 function getKey() {
@@ -21,14 +20,20 @@ function randomNR(min, max) {
 
 function getToken(payload, key, type) {
   let token = '';
+
   switch (type) {
     case 'jwe':
-      const randomEnc = randomNR(0, jweAlgorithms.length - 1);
-      const jweEnc = jweAlgorithms[randomEnc].name;
-      token = jwt.generate('A256KW', jweEnc, payload, key);
+      const jweAlgRand = randomNR(0, tokenAlgorithms.jweAlg.length - 1);
+      const jweAlg = tokenAlgorithms.jweAlg[jweAlgRand];
+      const jweEncRand = randomNR(0, tokenAlgorithms.jweEnc.length - 1);
+      const jweEnc = tokenAlgorithms.jweEnc[jweEncRand];
+      token = jwt.generate(jweAlg, jweEnc, payload, key);
       break;
+
     case 'jwt':
-      token = jwt.generate('HS512', payload, key);
+      const jwtAlgRand = randomNR(0, tokenAlgorithms.jwtAlg.length - 1);
+      const jwtAlg = tokenAlgorithms.jwtAlg[jwtAlgRand];
+      token = jwt.generate(jwtAlg, payload, key);
       break;
   }
   return token;
