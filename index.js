@@ -1,28 +1,35 @@
-const jwt = require("node-webtokens");
-const bcrypt = require("bcrypt");
-const saltRounds = 10;
-const secret_key = "IndiaIsABeautifulCountry";
-
-const key1 = bcrypt.hashSync(secret_key, saltRounds);
-const key2 = bcrypt.hashSync(key1, saltRounds);
-
-const keys = key1 + key2;
-const key = keys.substr(0, 100);
+const jwt = require('node-webtokens');
+const utility = require('./utility');
+const key = utility.getKey();
 
 var payload = {
-  iss: "auth.mydomain.com",
-  aud: "A1B2C3D4E5.com.mydomain.myservice",
-  sub: "jack.sparrow@example.com",
-  info: "Hello World!",
+  iss: 'auth.mydomain.com',
+  aud: 'A1B2C3D4E5.com.mydomain.myservice',
+  sub: 'jack.sparrow@example.com',
+  info: 'Hello World!',
   list: [1, 2, 3]
 };
 
-var token = jwt.generate("A256KW", "A256GCM", payload, key);
-console.log(token);
+const jweToken = utility.getToken(payload, key, 'jwe');
+const jwtToken = utility.getToken(payload, key, 'jwt');
 
-var parsed = jwt.parse(token).verify(key);
-console.log(parsed.valid);
-// true
-console.log(parsed.header);
-// { alg: 'HS512' }
-console.log(parsed.payload);
+const parsedJweToken = utility.getParsedToken(jweToken, key);
+const parsedJwtToken = utility.getParsedToken(jwtToken, key);
+
+console.log(
+  utility.getTokenDetails(payload, key, 'jwe', jweToken, parsedJweToken)
+);
+
+console.log(
+  utility.getTokenDetails(payload, key, 'jwt', jwtToken, parsedJwtToken)
+);
+
+setInterval(() => {
+  console.log(
+    'parsedJweToken valid => ' + utility.isTokenValid(jweToken, key, 5).valid
+  );
+  console.log('========================================================');
+  console.log(
+    'parsedJwtToken valid => ' + utility.isTokenValid(jwtToken, key, 15).valid
+  );
+}, 2000);
