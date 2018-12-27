@@ -24,12 +24,27 @@ console.log(
   utility.getTokenDetails(payload, key, 'jwt', jwtToken, parsedJwtToken)
 );
 
-setInterval(() => {
-  console.log(
-    'parsedJweToken valid => ' + utility.isTokenValid(jweToken, key, 5).valid
-  );
-  console.log('========================================================');
-  console.log(
-    'parsedJwtToken valid => ' + utility.isTokenValid(jwtToken, key, 15).valid
-  );
-}, 2000);
+let timer = 1;
+
+const counter = setInterval(() => {
+  const jweValid = utility.isTokenValid(jweToken, key, 5).valid;
+  const jwtValid = utility.isTokenValid(jwtToken, key, 10).valid;
+
+  if (jweValid) {
+    console.log(
+      'JWE Token valid => ' + jweValid + ' \n till => ' + timer + 'seconds'
+    );
+  }
+  if (jwtValid) {
+    console.log(
+      'JWT Token valid => ' + jwtValid + ' \n till => ' + timer + 'seconds'
+    );
+  }
+
+  if (!jweValid && !jwtValid) {
+    clearTimeout(counter);
+  } else {
+    console.log('*************************');
+  }
+  timer++;
+}, 1000);
