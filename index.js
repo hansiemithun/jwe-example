@@ -7,7 +7,8 @@ var payload = {
   aud: 'A1B2C3D4E5.com.mydomain.myservice',
   sub: 'jack.sparrow@example.com',
   info: 'Hello World!',
-  list: [1, 2, 3]
+  list: [1, 2, 3],
+  exp: Math.floor(Date.now() / 1000) + 3600 // expires in an hour
 };
 
 const jweToken = utility.getToken(payload, key, 'jwe');

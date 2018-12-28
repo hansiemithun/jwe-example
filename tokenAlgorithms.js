@@ -1,6 +1,5 @@
 module.exports = {
   jweAlg: [
-    'RSA-OAEP',
     'A128KW',
     'A192KW',
     'A256KW',
