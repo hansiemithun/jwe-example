@@ -1,5 +1,5 @@
 const jwt = require('node-webtokens');
-const tokenAlgorithms = require('./tokenAlgorithms');
+const jsonToken = require('./jsonTokenAlgorithms');
 const bcrypt = require('bcrypt');
 
 function getKey() {
@@ -14,7 +14,7 @@ function getKey() {
   return key;
 }
 
-function randomNR(min, max) {
+function getRandomNum(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
@@ -23,16 +23,16 @@ function getToken(payload, key, type) {
 
   switch (type) {
     case 'jwe':
-      const jweAlgRand = randomNR(0, tokenAlgorithms.jweAlg.length - 1);
-      const jweAlg = tokenAlgorithms.jweAlg[jweAlgRand];
-      const jweEncRand = randomNR(0, tokenAlgorithms.jweEnc.length - 1);
-      const jweEnc = tokenAlgorithms.jweEnc[jweEncRand];
+      const jweAlgRand = getRandomNum(0, jsonToken.jweAlg.length - 1);
+      const jweAlg = jsonToken.jweAlg[jweAlgRand];
+      const jweEncRand = getRandomNum(0, jsonToken.jweEnc.length - 1);
+      const jweEnc = jsonToken.jweEnc[jweEncRand];
       token = jwt.generate(jweAlg, jweEnc, payload, key);
       break;
 
     case 'jwt':
-      const jwtAlgRand = randomNR(0, tokenAlgorithms.jwtAlg.length - 1);
-      const jwtAlg = tokenAlgorithms.jwtAlg[jwtAlgRand];
+      const jwtAlgRand = getRandomNum(0, jsonToken.jwtAlg.length - 1);
+      const jwtAlg = jsonToken.jwtAlg[jwtAlgRand];
       token = jwt.generate(jwtAlg, payload, key);
       break;
   }
@@ -50,15 +50,16 @@ function getParsedToken(token, key) {
   return jwt.parse(token).verify(key);
 }
 
-function getTokenDetails(payload, key, type, token, parsedToken) {
+function getTokenDetails(payLoadInfo, key, type, token, parsedToken) {
+  const { header, payload, valid } = parsedToken;
   return {
-    payload,
+    payLoadInfo,
     key,
     type,
     token,
-    header: parsedToken.header,
-    payload: parsedToken.payload,
-    isValid: parsedToken.valid
+    header,
+    payload,
+    valid
   };
 }
 
