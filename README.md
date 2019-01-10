@@ -9,7 +9,6 @@ Gives knowledge to handle expiry for the token
    - Clone the repo
    - Do `npm install` or `yarn`
    - `npm start`
-   - 
    
 You will be able to see the jwt token being generated also jwe and its payload data.
 
